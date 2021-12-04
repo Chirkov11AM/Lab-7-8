@@ -34,7 +34,7 @@ GPIOC::MODER::MODER13::Input::Set();
 
 Перед построением программы составим ее архитектуру.
 
-image::1.PNG[]
+image::1.png[]
 
 === Классы и его функции
 
@@ -54,10 +54,7 @@ public:
   }
   void swicthOff() override
   {
-     GPIOA::ODR::ODR5::Low::Set();
-     GPIOC::ODR::ODR5::Low::Set();
-     GPIOC::ODR::ODR8::Low::Set();
-     GPIOC::ODR::ODR9::Low::Set();
+    Port::BSRR::Write(pinNum << 16);
   }
 };
 
@@ -196,23 +193,21 @@ template <auto& TLeds>
 class Tree : public IMode
 {
 public:
-void toggle() const override
-{
-  for ( uint32_t index =0; index < std::size(TLeds.pLeds); ++index)
+void toggle() override
  {
-    TLeds.pLeds[index]->toggle();
-   for (int i = 0; i < 500000; ++i)
-  {
-   asm volatile("");
-  }
-}
-}
+  TLeds.pLeds[index]->toggle();
+  index++;
+  if (index>= std::size(Tleds.pLeds))
+   {
+    index=0U;
+    }
+ }
 void init() const override
-{
-TLeds.swicthOff();
-}
+ {
+  Tindex=0U;
+  TLeds,SwitchOff();
+ }
 };
-
 
 === Main.с
 
@@ -243,4 +238,4 @@ return 1;
 
 == Результат работы программы
 
-image::1.gif[]
+image::1.GIF[]
